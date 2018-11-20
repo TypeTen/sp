@@ -1,15 +1,10 @@
 {
   "name": "sp",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "dependencies": {
-  },
-  "devDependencies": {
-  },
+  "description": "Starting Project",
+  "main": "Gruntfile.js",
   "scripts": {
-    "build": "webpack --config webpack.prod.js",
-    "buildDev": "webpack --config webpack.dev.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -20,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/TypeTen/sp/issues"
   },
-  "homepage": "https://github.com/TypeTen/sp#readme"
+  "homepage": "https://github.com/TypeTen/sp#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }

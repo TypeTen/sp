@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Birds</title>
+		<script>
+			function S4() {
+				return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+			}
+
+			function guid() {
+				return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+			}
+
+			// Generates a random int between two given values
+			function randi(s, e) {
+				return Math.floor(Math.random()*(e-s) + s);
+			}
+
+			// Generates a random float between two given values
+			function randf(s, e) {
+				return Math.random()*(e-s) + s;
+			}
+			
+			// Vector object
+			function Vector2D(x, y) {
+				this.x = x;
+				this.y = y;
+
+				this.plusEq = function(v) {
+					this.x += v.x;
+					this.y += v.y;
+				}
+				
+				this.plusMin = function(v) {
+					this.x -= v.x;
+					this.y -= v.y;
+				}
+			}
+			
+			function distance(obj1, obj2) {
+				var
+					distX = obj1.position.x - obj2.position.x,
+					distY = obj1.position.y - obj2.position.y;
+				return Math.sqrt(distX * distX + distY * distY);
+			}
+
+			function collision(obj1, obj2) {
+				return 10 >= distance(obj1, obj2); // Where 10 is obj1's radius + obj2's radius
+			}
+
+		</script>
+		<script src="birds.js"></script>
+		<style>
+			body {
+				margin: 0;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="canvas"></canvas>
+		<script>
+			// SO YOUR TASK!
+			
+			// Take what we have done here, and port it to Lua!
+			function World() {
+				// Globals
+				CSTATE = "•";
+				TSTATE = "o";
+				ASTATE = "@";
+				OSTATE = "X";
+				FPS = 25;
+				
+				var self = this;
+
+				var WIDTH, HEIGHT;				
+
+				this.initBirds = 20;
+
+				this.stats = {
+					"birds": this.initBirds,
+					"children": 0,
+					"generation": 1,
+					"deaths": 0,
+					"timer": 0
+				};
+
+				this.birds = [];
+				
+				this.init = function() {
+					self.canvas = document.getElementById("canvas");
+					self.ctx = self.canvas.getContext("2d");					
+
+					WIDTH = window.innerWidth;
+					HEIGHT = window.innerHeight;
+
+					self.canvas.width = WIDTH;
+					self.canvas.height = HEIGHT;
+
+					for(var i = 0; i < self.initBirds; i++) {
+						self.birds.push(new Bird(WIDTH, HEIGHT, self));
+					}
+					
+					setInterval(self.update, 1000/FPS);
+				}
+				
+				// Update funciton gets called like a game loop. 25 times a second.
+				this.update = function() {
+					self.ctx.clearRect(0, 0, WIDTH, HEIGHT);
+					self.ctx.fillStyle = "#CD9575";  
+					self.ctx.fillRect (0, 0, WIDTH, HEIGHT);
+					
+					for(var i in self.birds) {
+						var bird = self.birds[i];
+						
+						for(var j in self.birds) {
+							var mate = self.birds[j];
+							
+							if(bird.ID == mate.ID) continue; // Same bird!
+							
+							if(collision(bird, mate)) {
+								if(bird.gender == mate.gender) continue; // Not interested. Not gay.
+								
+								if(bird.ID == mate.mate || bird.mate == mate.mate) { // Second parameter basically checks if both are null.
+									// but lets get age done first k
+								}
+							}
+						}
+						
+						bird.draw();
+					}
+					
+					self.stats.timer += 1/FPS;
+					
+					self.outputStats();
+				}
+				
+				this.getMate = function(ID) {
+					for(var i in self.birds) {
+						if(self.birds[i].ID == ID) {
+							return self.birds[i];
+						}
+					}
+					return null;
+				}
+				
+				this.outputStats = function() {
+					var ctx = self.ctx;
+
+					ctx.fillStyle = "rgba(0, 0, 0, 0.075)";
+					ctx.fillRect(0, 0, WIDTH, 18);
+
+					ctx.fillStyle = "#000";
+					
+					var str = "";
+					
+					for(var k in self.stats) {
+						if(k == "timer") {
+							str += k + ": " + self.stats[k].toFixed(2) + "; ";
+						} else {
+							str += k + ": " + self.stats[k] + " | ";
+						}
+					}
+					
+					ctx.fillText(str, 8, 12);
+				}
+			}
+			
+			var world = new World();
+			world.init();
+		</script>
+	</body>
+</html>
